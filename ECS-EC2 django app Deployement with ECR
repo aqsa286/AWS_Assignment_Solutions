@@ -1,0 +1,144 @@
+
+==> ECS Docker django app Deployement with EC2 Instance :
+
+==> Create and Push to ECR repository:
+Step-1: In search tab search ECR
+> Create repo.
+name: demorepo
+> Create repo.
+
+:: Create always private repo.
+
+Step-2: Install aws cli in terminal/Instance:
+
+ Link: https://www.fosstechnix.com/how-to-install-aws-cli-on-ubuntu/
+
+Step-3: Clone code here, from github or not it's your choice.
+:: Dockerfile :: like you django-docker-compose project code keep here in terminal.
+:: Now push this code in ECR Repo.
+
+Step-4: Push code at ECR Repo.:
+-> Go at aws ecr repo "demorepo" Click on it.
+> view push commands
+:: Now copy these commands and run at terminal at project repo.
+Output --> Login Succeeded.
+
+:: Now go at aws ecr repo. and refresh page now here will be shown your code/image.
+
+==> Create a ECS cluster:
+
+In aws search: ECS    ---> Elastic Container Service.
+:: Select here template
+--> select :   EC2 Linux + Networking
+
+> Next step
+Cluster Name: democluster
+Provisioning Model: On-Demand Instance
+EC2 instance type* : t2.micro
+Key pair: _______
+
+Container instance IAM role : ecsInstanceRole
+
+
+> Create
+> view cluster
+:: Status will be active.
+
+:: You can create task definition without creating cluster no dependencies are here.
+
+==> Create a Task Definition:
+Select   ---> EC2
+> Next step
+Task Definition Name: demo_app
+Task role: ecsTaskEexcutionRole
+Network mode: Bridge
+Requirement compatibilities:  EC2
+Task memory(MiB): 256
+Task CPU(unit): 256
+
+> Add container        ---> Now add here your container info. which you did add in ECR Repo
+Container Name: demo_c
+Image:__________        ---> Paste here "image_uri" from ECR Repo.
+Port mappings: 8000  : 8000  : tcp   ---> Where your container is running.
+Log configuration        ---> Enable this.
+> Add.
+
+> Create.
+> View Task Definition
+
+
+==> Run the task:
+:: Select Task Defintion which you did created.
+> Actions
+> Run Task
+Launch type: EC2
+Task Definition: demo_app         ---> This will automatically selected.
+Cluster: democluster
+No. of task: 1
+..
+> Run Task       ---> It's take time for status running.
+
+
+:: click on " Create new version" for update image version or do any changes.
+
+:: Go at "Task Definition" select it, which you did created.
+> Action
+> Create a service.
+==> Create a Service
+> Cluster
+> Services            ---> Select service tab here.
+> Create 
+select   ---> EC2     ---> Launch type
+Task Definition: demo_app            ---> Select here task definition which you did created.
+Revision: 1    --> time of your revisions
+Service Name: demo-service
+No. of task: 1
+Deployement type: Rolling update
+> Next Step
+> Next Step    ---> Leave everything default.
+> Next Step      ---> Leave everything default.
+> Create Service.
+
+:::
+
+==> Go at ECS-Instance (EC2) which will created automatically.
+
+Security Group: 
+> Inbound Role   ---> Select "Edit Inbound Rules"
+> Add rule
+Select    ---> Custom TCP: TCP : 8000 : custom  : 206.84.173.90/32
+Select    ---> HTTP : TCP : 80 : custom : 0.0.0.0::/0
+Select    ---> SSH : TCP : 8080 : custom : 206.84.173.90/32
+> Save rules.
+
+
+:: Now copy ip and port and run in browser 
+:: django app will deploy succesfully.
+
+====================================
+Create a new GitHub repository
+Install and configure Docker
+
+:: In aws:
+-> Create an Amazon ECR repository:
+:: In search tab search ECR
+> Create repo.
+name: demo
+> Create repo.
+
+-> Install awsc-li in terminal/instance.
+
+Set Amazon ECS registry repository policy
+Build a Docker image and push it to Amazon ECR
+Create an Elastic Load Balancing load balancer
+Create an Amazon ECS cluster
+
+
+
+=========================================
+
+
+:: In "Create a Task Definition" section.
+
+--> If you did select "EC2" means you manage your server.
+--> If you did select "Fargate" means aws manage your server.

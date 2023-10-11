@@ -1,0 +1,128 @@
+
+ECS Docker Deployement:
+
+==> Create and Push to ECR repository:
+Step-1: In search tab search ECR
+> Create repo.
+name: demorepo
+> Create repo.
+
+Step-2: Install aws cli in terminal/Instance:
+
+ Link: https://www.fosstechnix.com/how-to-install-aws-cli-on-ubuntu/
+
+Step-3: Clone code here, from github or not it's your choice.
+:: Dockerfile :: like you django-docker-compose project code keep here in terminal.
+:: Now push this code in ECR Repo.
+
+Step-4: Push code at ECR Repo.:
+-> Go at aws ecr repo "demorepo" Click on it.
+> view push commands
+:: Now copy these commands and run at terminal at project repo.
+Output --> Login Succeeded.
+
+:: Now go at aws ecr repo. and refresh page now here will be shown your code/image.
+
+==> Create a ECS cluster:
+
+In aws search: ECS    ---> Elastic Container Service.
+:: Select here template
+:: By default selected : powered by fargate
+
+> Next step
+Cluster Name: democluster
+create vpc        ---> Check this.
+> Create
+> view cluster
+:: Status will be active.
+
+:: You can create task definition without creating cluster no dependencies are here.
+
+==> Create a Task Definition:
+Select   ---> Fargate
+> Next step
+Task Definition Name: demo_app
+Task memory: 0.5GB
+Task CPU: 0.25GB
+
+> Add container        ---> Now add here your container info. which you did add in ECR Repo
+Container Name: demo_c
+Image:__________        ---> Paste here "image_uri" from ECR Repo.
+Port mapping: 8080      ---> Where your container is running.
+> Add.
+
+> Create.
+> View Task Definition
+
+
+==> Run the task:
+:: Select Task Defintion which you did created.
+> Actions
+> Run Task
+Launch type: Fargate
+Task Definition: demo_app         ---> This will automatically selected.
+Cluster: democluster
+No. of task: 1
+Cluster vpc:       ---> By default selected
+Subnets:           ---> Select both Public subnet.
+Security Group:    ---> Select "Edit"
+> Add rule
+Select    ---> HTTP : TCP : 80 : Anywhere : 0.0.0.0::/0
+Select    ---> Custum : TCP : 8080 : Anywhere : 0.0.0.0::/0
+
+> Run Task       ---> It's take time for status running.
+
+:: click on " Create new version" for update image version or do any changes.
+
+
+==> Create a Service
+> Cluster
+> Services            ---> Select service tab here.
+> Create 
+select   ---> Fargate
+Task Definition: demo_app            ---> Select here task definition which you did created.
+Revision: 1
+Service Name: demo-service
+No. of task: 2
+Deployement type: Rolling update
+> Next Step
+> Subnets:  ____
+            ____
+
+Security Group:    ---> Select "Edit"
+> Add rule
+Select    ---> HTTP : TCP : 80 : Anywhere : 0.0.0.0::/0
+Select    ---> Custum : TCP : 8080 : Anywhere : 0.0.0.0::/0
+
+> Next Step
+> Next Step      ---> Leave everything default.
+> Create Service.
+
+
+====================================
+Create a new GitHub repository
+Install and configure Docker
+
+:: In aws:
+-> Create an Amazon ECR repository:
+:: In search tab search ECR
+> Create repo.
+name: demo
+> Create repo.
+
+-> Install awsc-li in terminal/instance.
+
+Set Amazon ECS registry repository policy
+Build a Docker image and push it to Amazon ECR
+Create an Elastic Load Balancing load balancer
+Create an Amazon ECS cluster
+
+
+
+=========================================
+
+
+:: In "Create a Task Definition" section.
+
+--> If you did select "EC2" means you manage your server.
+--> If you did select "Fargate" means aws manage your server.
